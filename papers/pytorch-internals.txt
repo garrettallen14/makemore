@@ -1,0 +1,38 @@
+http://blog.ezyang.com/2019/05/pytorch-internals/
+
+Goal: understand the basic conceptual structure of a "tensor library that supports automatic differentiation"
+
+Concepts: 
+- Tensor/Storage/Strides
+- Layout/Device/Dtype
+- Autograd
+
+Tensor:
+- The central data structure in PyTorch.
+- n-dim data structure containing some dtype
+- Consists of data and then some metadata describing the size, type and what device it lives on (CPU memory, CUDA)
+
+Strides: 
+- A tensor is a mathematical concept (logical representation), but to represent on computers, we have to define a physical representation.
+- The most common representation is to lay out each element of the tensor contiguously in memory.
+- Each integer in the tensor lives in a physical address.
+- Suppose I want to access element at position tensor[0,1] in my logical representation. 
+- Q: How to translate into a location in physical memory?
+- A: Strides tell you how to do this: to find out where any element for a tensor lives, I multiply each index with the respective stride for that dimension & sum up.
+- Strides are the fundamental basis of how we provide views to PyTorch users.
+- Whenever you manipulate the shape of a tensor, you aren't creating anything new, just changing strides.
+- Stride Visualizer: https://ezyang.github.io/stride-visualizer/index.html
+
+Storage:
+- There may be multiple tensors sharing the same storage.
+- Storage defines the dtype and physical size of the tensor.
+- There is always a pair of Tensor-Storage.
+
+Extensions:
+- There are plenty of Tensor extensions
+- All are built around a tensor wrapper with (device, layout, dtype)
+
+Autograd:
+- Tensors = essentially Numpy
+- Automatic differentiation on tensors is what separates PyTorch
+- Automatic differentiation takes a neural network and fills in the missing code to easily compute the gradients of your network.

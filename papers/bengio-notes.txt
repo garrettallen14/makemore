@@ -1,0 +1,41 @@
+Goal of statistical language modeling is to learn the joint probability function of sequences of words in a language.
+Curse of dimensionality makes this difficult: a word sequence on which the model will be tested is likely to be unseen in the training.
+In this paper, we fight the curse of dimensionality by learning a distributed representation for words.
+Allows each training sentence to inform the model about an exponential number of semantically neighboring sentences.
+
+The model simultaneously learns: 1. a distributed representation for each word,
+2. the probability function for word sequences, expressed in terms of these representations.
+
+Generalization is obtained because a sequence of words that has yet to be seen gets high probability if has semantic meaning similar to something we trained on.
+
+Fighting the Curse of Dimensionality with Distributed Representations:
+1. Associate each word in the vocabulary to a distributed word feature vector (v in Rm)
+2. Express the joint probability function of word sequences in terms of the feature vectors of words in these sentences
+3. Learn simultaneously the word feature vectors and the parameters of this probability function
+
+The number of features (ex. m=30,60,100) is far smaller than the size of the vocabulary (ex. 17000)
+The probability function is expressed as a product of conditional probabilities of the next word given the previous ones.
+(eg. using a multi-layer neural netword to predict the next word given the previous ones)
+This probability function has parameters that can be tuned to maximize the log-likelihood of the training data.
+
+
+A neural model:
+Training set is a sequence w1...wT of words wt in V (a large vocabulary)
+Objective: learn a good model f(w[t],...,w[t-n+1]) = P(w[t] | w1[t-1]), in the sense that this gives high out-of-sample likelihood.
+The only constraint: for any choice w1[t-1], the sum of f(...) = 1
+We decompose the function f(w[t],...,w[t-n+1]) = P(w[t] | w1[t-1]) into two parts:
+1. A mapping C from any element i in V to a real vector C(i) in Rm. This is a distributed feature vector associated with each word in the vocab.
+C is represented by a |V| x m matrix of free parameters.
+2. The probability function over words, expressed with C: a function g maps an input sequence of feature vectors for words in context (C(w[t-n+1]),...,C(w[t-1]))
+to a conditional probability distribution over words in V for the next word w[t]. The output of g is a vector whose i-th element estimates the probability P(w[t]=i | w1[t-1])
+
+f(i,w[t-1],...,w[t-n+1]) = g(i,C(w[t-1],...,C(w[t-n+1])))
+f is a composition of the two mappings (C and g), with C being shared accross all the words in context.
+
+Example:
+Take three previous words and try to predict the fourth word.
+- Table look-up in C for each word in the context.
+- The C vector representation of each word is input into g.
+- g provides us with the potential next word. 
+
+Each word has a 30 neuron embedding.
